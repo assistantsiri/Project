@@ -1,0 +1,71 @@
+create a dynamic Menu:-
+-------------------------
+
+select * from ICMS_MENU_MAST t
+
+/
+IMM_USER_TYP	IMM_MENU_LEVEL1	IMM_MENU_LEVEL2	IMM_MENU_LEVEL3	IMM_MENU_TITLE	IMM_MENU_URL
+1	HO	2	1	0	Intimation	Intimation.aspx
+2	HO	2	5	0	Document Upload	DocumentUpload.aspx
+3	HO	2	3	0	SurveyDetails	SurveyDetails.aspx
+4	HO	2	2	0	IntimationAuthorise	IntimationAuthorise.aspx
+5	HO	2	4	0	SurveyDetailsAuthorise	SurveyDetailsAuthorise.aspx
+6	HO	2	6	0	DocumentAuthorise	DocumentAutherise.aspx
+7	HO	1	0	0	Masters	
+8	HO	2	0	0	Transaction	
+9	BRANCH	2	0	0	Transaction	
+10	BRANCH	3	0	0	Report	
+11	BRANCH	2	1	0	Intimation	Intimation.aspx
+12	BRANCH	2	5	0	Document Upload	DocumentUpload.aspx
+13	BRANCH	3	1	0	Claim Report	R_ClaimReport.aspx
+14	BRANCH	2	3	0	SurveyDetails	SurveyDetails.aspx
+15	BRANCH	2	2	0	IntimationAuthorise	IntimationAuthorise.aspx
+16	HO	2	7	0	Claim Settlement	ClaimSettlement.aspx
+17	BRANCH	1	0	0	Masters	
+18	BRANCH	2	4	0	SurveyDetailsAuthorise	SurveyDetailsAuthorise.aspx
+19	BRANCH	1	1	0	Claim Masterview	ClaimMasterview.aspx
+20	BRANCH	1	2	0	Email Master View	EmailMasterView.aspx
+21	HO	3	0	0	Report	
+22	HO	3	1	0	Claim Report	R_ClaimReport.aspx
+23	HO	3	2	0	SettledClaim Report	R_SettiledClaimReport.aspx
+24	HO	3	3	0	Partial Settlement Report	R_PartialClaimReport.aspx
+25	HO	3	4	0	SurveyCompleted	R_SurveyCompleteReport.aspx
+26	HO	3	5	0	Pending 	
+27	HO	3	5	1	Survey Pending 	R_PendingSurveyReports.aspx
+28	HO	3	5	2	Document Pending 	R_PendingDocumentReports.aspx
+29	HO	3	5	3	Claim Settlement	R_PendingClaimSettReports.aspx
+30	HO	3	6	1	Claim Detail-Wing	R_ClaimSettleMaster.aspx
+31	HO	3	6	0	Master Reports	
+32	HO	2	8	0	Claim Settlement Authorise	ClaimSettlementAuthorise.aspx
+33	BRANCH	2	6	0	DocumentAuthorise	DocumentAutherise.aspx
+34	HO	1	1	0	Claim Master	ClaimMaster.aspx
+35	HO	1	2	0	Email Master	EmailMaster.aspx
+36	RO	1	0	0	Masters	
+37	RO	1	1	0	Claim Masterview	ClaimMasterview.aspx
+38	RO	1	2	0	Email Master View	EmailMasterView.aspx
+39	RO	2	0	0	Transaction	
+40	RO	2	1	0	Intimation	Intimation.aspx
+41	RO	2	2	0	IntimationAuthorise	IntimationAuthorise.aspx
+42	RO	2	3	0	SurveyDetails	SurveyDetails.aspx
+43	RO	2	4	0	SurveyDetailsAuthorise	SurveyDetailsAuthorise.aspx
+44	RO	2	5	0	Document Upload	DocumentUpload.aspx
+45	RO	2	6	0	DocumentAutherise	DocumentAutherise.aspx
+46	RO	3	0	0	Report	
+47	RO	3	1	0	Claim Report	R_ClaimReport.aspx
+48	CO	1	0	0	Masters	
+49	CO	1	1	0	Claim Masterview	ClaimMasterview.aspx
+50	CO	1	2	0	Email Master View	EmailMasterView.aspx
+51	CO	2	0	0	Transaction	
+52	CO	2	1	0	Intimation	Intimation.aspx
+53	CO	2	2	0	IntimationAuthorise	IntimationAuthorise.aspx
+54	CO	2	3	0	SurveyDetails	SurveyDetails.aspx
+55	CO	2	4	0	SurveyDetailsAuthorise	SurveyDetailsAuthorise.aspx
+56	CO	2	5	0	Document Upload	DocumentUpload.aspx
+57	CO	2	6	0	DocumentAutherise	DocumentAutherise.aspx
+58	CO	3	0	0	Report	
+59	CO	3	1	0	Claim Report	R_ClaimReport.aspx
+
+
+
+
+/
