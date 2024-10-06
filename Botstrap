@@ -8,6 +8,46 @@ https://eres.w3itexpert.com/
 https://shahedbd.medium.com/hospital-management-system-asp-net-core-ef-core-4c7f82ffb33b
 
 
+
+
+script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('annexureForm').addEventListener('submit', function (e) {
+            var aadhaarNo = document.getElementById('AADHAAR_REFERENCE_NUMBER').value.trim();
+            var panNo = document.getElementById('PAN').value.trim();
+            
+            if (!aadhaarNo) {
+                e.preventDefault(); // Prevent form submission
+                alert('Aadhaar number is mandatory.'); // Show alert message
+                return false; // Return false to stop submission
+            }
+            
+            if (!panNo) {
+                e.preventDefault(); // Prevent form submission
+                alert('PAN number is mandatory.'); // Show alert message
+                return false; // Return false to stop submission
+            }
+
+            // Other validation checks can go here
+        });
+    });
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('annexureForm').addEventListener('submit', function (e) {
+            var aadhaarNo = document.getElementById('AADHAAR_REFERENCE_NUMBER').value.trim();
+            if (!aadhaarNo) {
+                e.preventDefault(); // Prevent form submission
+                alert('Aadhaar number is mandatory.'); // Show alert message
+                return false; // Return false to stop submission
+            }
+            // Other validation checks can go here
+        });
+    });
+</script>
+
 @section scripts {
     <script>
         document.getElementById('annexureForm').addEventListener('submit', function (e) {
