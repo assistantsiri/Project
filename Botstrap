@@ -7,6 +7,21 @@ https://codepen.io/codepenner-pen/pen/wgXzKR
 https://eres.w3itexpert.com/
 https://shahedbd.medium.com/hospital-management-system-asp-net-core-ef-core-4c7f82ffb33b
 
+
+@section scripts {
+    <script>
+        document.getElementById('annexureForm').addEventListener('submit', function (e) {
+            var aadhaarNo = document.getElementById('AADHAAR_REFERENCE_NUMBER').value.trim();
+            if (!aadhaarNo) {
+                e.preventDefault(); // Prevent form submission
+                alert('Aadhaar number is mandatory.'); // Show alert message
+                return false; // Return false to stop submission
+            }
+            // Other validation checks can go here
+        });
+    </script>
+}
+
 -------------------------------------------------------------------------------------------
 ASP.NET Core MVC:- https://www.yogihosting.com/category/aspnet-core/
 --------------------------------------------------------------------------------------------
