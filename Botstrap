@@ -7,6 +7,18 @@ https://codepen.io/codepenner-pen/pen/wgXzKR
 https://eres.w3itexpert.com/
 https://shahedbd.medium.com/hospital-management-system-asp-net-core-ef-core-4c7f82ffb33b
 
+routes.MapRoute(
+    name: "SBRepatriation",
+    url: "SBRepatriation/{action}/{id}",
+    defaults: new { controller = "SBRepatriation", action = "Index", id = UrlParameter.Optional }
+);
+
+<li>
+    <span>
+        <i class="image-datatransfer-left"></i>
+        @Html.ActionLink("Savings Bank", "ROOfficerAnnexureDetails", "SBRepatriation", null, new { @class = "link-class" })
+    </span>
+</li>
 
 
 
