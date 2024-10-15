@@ -278,3 +278,91 @@ https://rhythm-admin-template.multipurposethemes.com/main/index.html?
 
 
 =============================================================================
+
+
+
+public JsonResult GetAnnexureListHOOfficer(string sidx, string sort, int page, int rows, bool _search, string filters)
+{
+    var usrList = HttpContext.Session["UserModel"] as UserModel;
+    if (usrList == null)
+    {
+        return Json(new { error = "User not found in session." }, JsonRequestBehavior.AllowGet);
+    }
+
+    string usrid = usrList.StafNumber.ToString();
+    var filterModel = (!_search || string.IsNullOrEmpty(filters)) ? null : JsonConvert.DeserializeObject<Filters>(filters);
+    sort = string.IsNullOrEmpty(sort) ? "" : sort;
+    int pageIndex = Convert.ToInt32(page) - 1;
+    int pageSize = rows;
+
+    var approvals = new List<string>
+    {
+        "ManagerApproval~TD", "ROApproval~TD", "COApproval~TD"
+    };
+
+    var jsonData = new
+    {
+        total = 0,
+        page,
+        records = 0,
+        rows = new List<object>()
+    };
+
+    try
+    {
+        foreach (var status in approvals)
+        {
+            var caAccountDetails = _repatriationService.GetAnnexureList(filterModel, "", status, usrid);
+            jsonData.rows.AddRange(caAccountDetails);
+            jsonData.records += caAccountDetails.Count;
+        }
+
+        jsonData.total = (int)Math.Ceiling((float)jsonData.records / rows);
+    }
+    catch (Exception ex)
+    {
+        return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+    }
+
+    return Json(jsonData, JsonRequestBehavior.AllowGet);
+}
+
+[HttpGet]
+[CustomAuthorize(AllowedRoles = "8")]
+public ActionResult GetAnnexureHOOfficerApproval(string accountNumber)
+{
+    var usrList = HttpContext.Session["UserModel"] as UserModel;
+    if (usrList == null)
+    {
+        return RedirectToAction("Login", "Account"); // or appropriate action
+    }
+
+    string usrid = usrList.StafNumber.ToString();
+    var approvals = new List<string>
+    {
+        "ManagerApproval~TD", "ROApproval~TD", "COApproval~TD"
+    };
+    
+    List<AnnexureModel> jsonResults = new List<AnnexureModel>();
+
+    try
+    {
+        foreach (var status in approvals)
+        {
+            var annexureDetails = _repatriationService.GetAnnexureDetailsList(accountNumber, "", status, usrid);
+            var details = annexureDetails.FirstOrDefault();
+            if (details != null)
+            {
+                jsonResults.Add(details);
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        // Log the exception
+        ModelState.AddModelError("", ex.Message); // Add error message to model state for view
+    }
+
+    return View(jsonResults);
+}
+
