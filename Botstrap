@@ -366,3 +366,74 @@ public ActionResult GetAnnexureHOOfficerApproval(string accountNumber)
     return View(jsonResults);
 }
 
+---------------------------------------------------------------------------------------------------------------
+
+public List<JsonResult> GetAnnexureListHOOfficer(string sidx, string sort, int page, int rows, bool _search, string filters)
+{
+    var usrList = HttpContext.Session["UserModel"] as UserModel;
+    string usrid = usrList.StafNumber.ToString();
+    
+    var filterModel = (!_search || string.IsNullOrEmpty(filters)) ? null : JsonConvert.DeserializeObject<Filters>(filters);
+    sort = (sort == null) ? "" : sort;
+    int pageIndex = Convert.ToInt32(page) - 1;
+    int pageSize = rows;
+
+    // Approval statuses for each page
+    var Approval = new List<string>()
+    {
+        "ManagerApproval~TD",  // For HO
+        "ROApproval~TD",       // For RO
+        "COApproval~TD"        // For CO
+    };
+
+    List<JsonResult> jsonResults = new List<JsonResult>();
+
+    foreach (var status in Approval)
+    {
+        // Fetch data for each status
+        var caAccountDetails = _repatriationService.GetAnnexureList(filterModel, "", status, usrid);
+
+        // Apply conditions for each approval flow
+        if (status == "ManagerApproval~TD")
+        {
+            // HO Page: Direct HO approval for balances less than 50 thousand
+            caAccountDetails = caAccountDetails.Where(ca => ca.amount_balance < 50000).ToList();
+        }
+        else if (status == "ROApproval~TD")
+        {
+            // RO Page: Handle balances between 50 thousand and 5 lakh
+            caAccountDetails = caAccountDetails.Where(ca => ca.amount_balance >= 50000 && ca.amount_balance < 500000).ToList();
+        }
+        else if (status == "COApproval~TD")
+        {
+            // CO Page: Handle balances above 5 lakh
+            caAccountDetails = caAccountDetails.Where(ca => ca.amount_balance >= 500000).ToList();
+        }
+
+        // Further filter data for the HO page after RO/CO approvals
+        if (status == "ROApproval~TD" || status == "COApproval~TD")
+        {
+            caAccountDetails = caAccountDetails.Where(ca => ca.Status.Contains("HOApproval")).ToList();
+        }
+
+        // Calculate total records and pages
+        int totalRecords = caAccountDetails.Count;
+        var totalPages = (int)Math.Ceiling((float)totalRecords / rows);
+
+        // Prepare JSON data
+        var jsonData = new
+        {
+            total = totalPages,
+            page,
+            records = totalRecords,
+            rows = caAccountDetails
+        };
+
+        // Create JSON result with MaxJsonLength
+        var jsonResult = Json(jsonData, JsonRequestBehavior.AllowGet);
+        jsonResult.MaxJsonLength = int.MaxValue;
+        jsonResults.Add(jsonResult);
+    }
+
+    return jsonResults;
+}
