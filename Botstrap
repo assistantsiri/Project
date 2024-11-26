@@ -498,4 +498,541 @@ public List<JsonResult> GetAnnexureListHOOfficer(string sidx, string sort, int p
     height: 3rem;
 }
 </style>
+------------------------------------------------------------------------------------------------------------------
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>SAS Login</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script type='text/javascript'>
+        var appInsights = window.appInsights || function (config) {
+            function r(config) { t[config] = function () { var i = arguments; t.queue.push(function () { t[config].apply(t, i) }) } }
+            var t = { config: config }, u = document, e = window, o = 'script', s = u.createElement(o), i, f; for (s.src = config.url || '//az416426.vo.msecnd.net/scripts/a/ai.0.js', u.getElementsByTagName(o)[0].parentNode.appendChild(s), t.cookie = u.cookie, t.queue = [], i = ['Event', 'Exception', 'Metric', 'PageView', 'Trace', 'Ajax']; i.length;) r('track' + i.pop()); return r('setAuthenticatedUserContext'), r('clearAuthenticatedUserContext'), config.disableExceptionTracking || (i = 'onerror', r('_' + i), f = e[i], e[i] = function (config, r, u, e, o) { var s = f && f(config, r, u, e, o); return s !== !0 && t['_' + i](config, r, u, e, o), s }), t
+        }({
+            instrumentationKey: '7647dea9-f4f5-4736-a38b-a2a5dcf7b7bc'
+        });
+
+        window.appInsights = appInsights;
+        appInsights.trackPageView();
+    </script>
+    <script src="~/Scripts/common.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAS Login Integration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/fonts/StyleSheet1.css" rel="stylesheet" />
+    <style>
+        body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.spinner-container {
+    text-align: center;
+}
+
+.spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #007bff;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+
+
+.spinner-container h2 {
+    margin-top: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+.spinner-container p {
+    font-size: 18px;
+    color: #555;
+}
+
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .section-header {
+            padding: 20px 0;
+            background-color: #fff;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-section {
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+            .content-section h4 {
+                margin-bottom: 15px;
+            }
+
+            .content-section hr {
+                border: 1px solid #ddd;
+            }
+
+        .row {
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 30px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        /* Section Background Colors */
+        .head-office {
+            background-color: #e3f2fd; /* Light Blue */
+        }
+
+        .ro {
+            background-color: #fbe9e7; /* Light Pink */
+        }
+
+        .co {
+            background-color: #f1f8e9; /* Light Green */
+        }
+
+        .branch-office {
+            background-color: #ede7f6; /* Light Purple */
+        }
+        /* Button Colors */
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+        .btn-success {
+            background-color: #198754;
+            border: none;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            border: none;
+        }
+        .login-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-control {
+            border-radius: 25px;
+        }
+
+        .btn-primary {
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+
+        .text-center a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+            .text-center a:hover {
+                text-decoration: underline;
+            }
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        .login-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            position: relative;
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-control {
+            border-radius: 25px;
+        }
+
+        .btn-primary {
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+
+        .text-center a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+            .text-center a:hover {
+                text-decoration: underline;
+            }
+
+    </style>
+</head>
+<body class="SAS-body">
+    <div id="welcome-spinner" class="spinner-overlay">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <h2>Welcome</h2>
+            <p>Depositors Education Awareness</p>
+        </div>
+    </div>
+
+    <div id="main-content" style="display: none;">
+        <div class="text-center section-header">
+            <h4>
+                <b>
+                    <span class="text-danger">S</span>AS
+                    <span class="text-danger">L</span>ogin
+                    <span class="text-danger">I</span>ntegration
+                    <span class="text-danger">C</span>anara
+                    <span class="text-primary">(UAT)</span>
+                </b>
+            </h4>
+        </div>
+
+        <!-- Head Office Section -->
+        <div class="content-section head-office">
+            <div class="text-center">
+                <h4><b>HEAD OFFICE</b></h4>
+            </div>
+            <hr>
+            <div class="row justify-content-center">
+                <div class="col-md-2">
+                    <a href="Home/Index?..." class="btn btn-primary">Officer BSCA Section</a>
+                </div>
+                <div class="col-md-2">
+                    <a href="Home/Index?..." class="btn btn-warning">Officer PPS Section</a>
+                </div>
+                <div class="col-md-2">
+                    <a href="Home/Index?..." class="btn btn-danger">Officer DDR Section</a>
+                </div>
+                <div class="col-md-2">
+                    <a href="Home/Index?..." class="btn btn-success">Manager BSCA Section</a>
+                </div>
+                <div class="col-md-2">
+                    <a href="Home/Index?..." class="btn btn-secondary">Manager DDR Section</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- RO Section -->
+        <div class="content-section ro">
+            <div class="text-center">
+                <h4><b>RO</b></h4>
+            </div>
+            <hr>
+            <div class="row justify-content-center">
+                <div class="col-md-3">
+                    <a href="Home/Index?..." class="btn btn-danger">Clerk Section</a>
+                </div>
+                <div class="col-md-3">
+                    <a href="Home/Index?..." class="btn btn-primary">Officer Section</a>
+                </div>
+                <div class="col-md-3">
+                    <a href="Home/Index?..." class="btn btn-success">Manager Section</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- CO Section -->
+        <div class="content-section co">
+            <div class="text-center">
+                <h4><b>CO</b></h4>
+            </div>
+            <hr>
+            <div class="row justify-content-center">
+                <div class="col-md-3">
+                    <a href="Home/Index?..." class="btn btn-success">Clerk Section</a>
+                </div>
+                <div class="col-md-3">
+                    <a href="Home/Index?..." class="btn btn-secondary">Officer Section</a>
+                </div>
+                <div class="col-md-3">
+                    <a href="Home/Index?..." class="btn btn-warning">Manager Section</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Branch Office Section -->
+        <div class="content-section branch-office">
+            <div class="text-center">
+                <h4><b>BRANCH OFFICE</b></h4>
+            </div>
+            <hr>
+            <div class="row justify-content-center">
+                <div class="col-md-3">
+                    <a href="Home/Index?..." class="btn btn-primary">Clerk Section</a>
+                </div>
+                <div class="col-md-3">
+                    <a href="Home/Index?..." class="btn btn-danger">Officer Section</a>
+                </div>
+                <div class="col-md-3">
+                    <a href="Home/Index?..." class="btn btn-success">Manager Section</a>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="particles-js"></div>
+
+        <div class="login-container">
+            @using (Html.BeginForm("Submit", "SASLogin", FormMethod.Post))
+            {
+                <div class="form-title">SAS Login</div>
+
+                <div class="form-group mb-3">
+                    <label for="OfficerType">Select Officer Type</label>
+                    <select id="OfficerType" name="Officer_Type" class="form-control">
+                        <option value="SelectOfficer">Select Officer</option>
+                        <option value="Clerk">Clerk</option>
+                        <option value="Officer">Officer</option>
+                        <option value="Manager">Manager</option>
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="Dpcd">Enter DPCD</label>
+                    <input type="text" id="Dpcd" class="form-control" placeholder="Enter DPCD" name="UAT_Dpcd">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="RoDpcd">Enter RoDPCD</label>
+                    <input type="text" id="RoDpcd" class="form-control" placeholder="Enter RoDPCD" name="UAT_RODpcd">
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+
+                <div class="text-center mt-3">
+                    <a href="#">Forgot your password?</a>
+                </div>
+            }
+        </div>
+
+        <!-- Initialize Particles.js -->
+        <script>
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#ffffff"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.5,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 40,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#ffffff",
+                        "opacity": 0.4,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 6,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "repulse"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    }
+                },
+                "retina_detect": true
+            });
+        </script>
+
+    </div>
+
+</body>
+</html>
+<style>
+    .SAS-body {
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+        display: table;
+        margin: 0 auto;
+        width: 97% !important;
+    }
+</style>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", () => {
+        const spinner = document.getElementById('welcome-spinner');
+        const mainContent = document.getElementById('main-content');
+
+        // Show spinner for 5 seconds, then display main content
+        setTimeout(() => {
+            spinner.style.display = 'none'; // Hide spinner
+            mainContent.style.display = 'block'; // Show main content
+        }, 5000); // 5 seconds
+    });
+
+</script>
+--------------------------------------------------------------------------------------------------
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+-----------------------------------------------------------------------------
 
