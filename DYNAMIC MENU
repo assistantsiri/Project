@@ -69,3 +69,369 @@ IMM_USER_TYP	IMM_MENU_LEVEL1	IMM_MENU_LEVEL2	IMM_MENU_LEVEL3	IMM_MENU_TITLE	IMM_
 
 
 /
+
+
+------------------------------------------------------------------------------------------
+
+using CCSL_UPLOAD_DATA.Services;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Web;
+
+namespace CCSL_UPLOAD_DATA
+{
+    public partial class HomePage : System.Web.UI.Page
+    {
+        private static List<FileDetail> uploadedFiles = new List<FileDetail>();
+        private const int PageSize = 5; 
+        private int currentPage = 0;
+
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                BindFilesToRepeater();
+            }
+        }
+
+        protected void btnUpload_Click(object sender, EventArgs e)
+        {
+            if (fileUploadControl.HasFile)
+            {
+                try
+                {
+                    // Check if filename is entered; if not, use the original filename
+                    string enteredFileName = !string.IsNullOrEmpty(txtFileName.Text) ? txtFileName.Text.Trim() : Path.GetFileName(fileUploadControl.FileName);
+                    string fileExtension = Path.GetExtension(fileUploadControl.FileName);
+                    string savedFileName = enteredFileName + fileExtension;
+                    string savePath = Server.MapPath("~/Uploads/") + savedFileName;
+
+                    // Create directory if it doesn't exist
+                    if (!Directory.Exists(Server.MapPath("~/Uploads/")))
+                    {
+                        Directory.CreateDirectory(Server.MapPath("~/Uploads/"));
+                    }
+
+                    // Save the file
+                    fileUploadControl.SaveAs(savePath);
+
+                    // Save file details to database
+                    var fileUpload = new Model.FileUpload
+                    {
+                        FileName = savedFileName,
+                        UploadDate = DateTime.Now
+                    };
+
+                    var uploadService = new Uploadataservices();
+                    uploadService.InsertFileUpload(fileUpload);
+
+                    // Add file details to list for UI display
+                    uploadedFiles.Add(new FileDetail
+                    {
+                        FileName = savedFileName,
+                        FilePath = "~/Uploads/" + savedFileName,
+                        UploadDate = DateTime.Now
+                    });
+
+                    // Bind updated data to the repeater
+                    BindFilesToRepeater();
+
+                    // Clear inputs
+                    txtFileName.Text = string.Empty;
+                }
+                catch (Exception ex)
+                {
+                    Response.Write("<script>alert('Error uploading file: " + ex.Message + "');</script>");
+                }
+            }
+            else
+            {
+                Response.Write("<script>alert('Please select a file to upload.');</script>");
+            }
+        }
+        protected void btnPrev_Click(object sender, EventArgs e)
+        {
+            if (currentPage > 0)
+            {
+                currentPage--;
+                BindFilesToRepeater();
+            }
+        }
+
+        protected void btnNext_Click(object sender, EventArgs e)
+        {
+            if ((currentPage + 1) * PageSize < uploadedFiles.Count)
+            {
+                currentPage++;
+                BindFilesToRepeater();
+            }
+        }
+        private void BindFilesToRepeater()
+        {
+            // Fetch files from the database and bind them to the repeater
+            var uploadService = new Uploadataservices();
+            List<Model.FileUpload> files = uploadService.GetUploadedFiles();
+
+            uploadedFiles.Clear(); // Clear the existing list
+
+            foreach (var file in files)
+            {
+                uploadedFiles.Add(new FileDetail
+                {
+                    FileName = file.FileName,
+                    FilePath = "~/Uploads/" + file.FileName,
+                    UploadDate = file.UploadDate
+                });
+            }
+
+            fileRepeater.DataSource = uploadedFiles;
+            fileRepeater.DataBind();
+        }
+    }
+
+    public class FileDetail
+    {
+        public string FileName { get; set; }
+        public string FilePath { get; set; }
+        public DateTime UploadDate { get; set; }
+    }
+}
+
+
+--------------------------------------------------------
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="HomePage.aspx.cs" Inherits="CCSL_UPLOAD_DATA.HomePage" %>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CANBANK COMPUTER SERVICES LIMITED</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        #sidebar {
+            height: 100vh;
+            background: #343a40;
+            color: #fff;
+            position: fixed;
+        }
+
+        #sidebar a {
+            color: #adb5bd;
+            text-decoration: none;
+        }
+
+        #sidebar a:hover {
+            color: #fff;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        footer {
+            background-color: #f8f9fa;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar" class="p-3">
+            <h4 class="text-center mb-4">DASHBOARD</h4>
+        </div>
+
+        <!-- Content -->
+        <div class="content flex-grow-1">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-light shadow mb-4">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">CANBANK COMPUTER SERVICES LIMITED</a>
+                </div>
+            </nav>
+
+
+
+            <form id="form1" runat="server">
+                <!-- File Upload Section -->
+               <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card shadow">
+                                <div class="card-body">
+                                    <h5>Upload File</h5>
+                                    <asp:FileUpload ID="fileUploadControl" runat="server" CssClass="form-control mb-2" />
+                                    <asp:TextBox ID="txtFileName" runat="server" CssClass="form-control mb-2" Placeholder="Enter File Name" ReadOnly="false"></asp:TextBox>
+                                    <asp:Button ID="btnUpload" runat="server" Text="Upload" CssClass="btn btn-primary" OnClick="btnUpload_Click" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Uploaded Files Table -->
+                    <div class="mt-4">
+    <div class="card shadow">
+        <div class="card-header">
+            <h5>Uploaded Files</h5>
+        </div>
+        <div class="card-body">
+            <!-- Table for displaying files -->
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>File Name</th>
+                        <th>Download</th>
+                        <th>Upload Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <asp:Repeater ID="fileRepeater" runat="server">
+                        <ItemTemplate>
+                            <tr>
+                                <td><%# Container.ItemIndex + 1 %></td>
+                                <td><%# Eval("FileName") %></td>
+                                <td>
+                                    <a href="<%# Eval("FileName") %>" target="_blank" class="btn btn-link">Download</a>
+                                </td>
+                                <td><%# Eval("UploadDate", "{0:dd/MM/yyyy}") %></td>
+                            </tr>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </tbody>
+            </table>
+
+            <!-- Pagination Controls with Bootstrap styling -->
+            <div class="d-flex justify-content-between mt-3">
+                <asp:Button ID="btnPrev" runat="server" Text="Previous" OnClick="btnPrev_Click" CssClass="btn btn-secondary" />
+                <asp:Button ID="btnNext" runat="server" Text="Next" OnClick="btnNext_Click" CssClass="btn btn-secondary" />
+            </div>
+        </div>
+    </div>
+</div>
+
+                </div>
+            </form>
+
+            <!-- Footer -->
+            <footer class="mt-4">
+                <div class="container">
+                    <p>&copy; 2024 Your Company Name. All rights reserved.</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
+
+-----------------------------------------------
+
+
+using CCSL_UPLOAD_DATA.Model;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+
+namespace CCSL_UPLOAD_DATA.Services
+{
+    public class Uploadataservices
+    {
+        public static string GetConfig()
+        {
+            string connectionString = "Data Source=LAPTOP-78EOA32A;Integrated Security=true;Initial Catalog=UploadDeathSanction;TrustServerCertificate=True";
+            return connectionString;
+        }
+        public void InsertFileUpload(FileUpload fileUpload)
+        {
+            var _connectionString = GetConfig();
+
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand command = new SqlCommand("INSERT INTO CCSLUPLOAD (FileName,UploadedDate) VALUES (@FileName, @UploadDate)", connection))
+                {
+                    command.CommandType = CommandType.Text;
+
+                    // Add all parameters with their values.
+                    command.Parameters.AddWithValue("@FileName", fileUpload.FileName);
+                    command.Parameters.AddWithValue("@UploadDate", fileUpload.UploadDate);
+
+
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        public List<Model.FileUpload> GetUploadedFiles()
+        {
+            var _connectionString = GetConfig();
+            List<Model.FileUpload> files = new List<Model.FileUpload>();
+            try
+            {
+                
+
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                {
+                    conn.Open();
+                    string query = "SELECT FileName, UploadDate FROM FileUploads";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        files.Add(new Model.FileUpload
+                        {
+                            FileName = reader["FileName"].ToString(),
+                            UploadDate = Convert.ToDateTime(reader["UploadDate"])
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error fetching uploaded files: " + ex.Message);
+            }
+            return files;
+        }
+    }
+}
+-------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace CCSL_UPLOAD_DATA.Model
+{
+    public class FileUpload
+    {
+        public int Id { get; set; }
+        public string FileName { get; set; }
+        public DateTime UploadDate { get; set; }
+        public string Status { get; set; }
+        public string UploadedBy { get; set; }
+        public string FileType { get; set; }
+      
+    }
+}
