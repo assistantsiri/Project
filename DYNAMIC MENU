@@ -557,6 +557,86 @@ namespace CCSL_UPLOAD_DATA.Model
             <asp:Button ID="btnPrev" runat="server" Text="Previous" OnClick="btnPrev_Click" CssClass="btn btn-secondary" />
             <asp:Button ID="btnNext" runat="server" Text="Next" OnClick="btnNext_Click" CssClass="btn btn-secondary" />
         </div>
+
+
+
+
+
+
+
+
+
+
+
+
+USE [HRM0324]
+GO
+/****** Object:  StoredProcedure [dbo].[HRMS_SalarySlipGeneration]    Script Date: 27-05-2024 12:15:56 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+ALTER PROCEDURE [dbo].[HRMS_SalarySlipGeneration] 
+    @Action CHAR(1),
+    @FromEmpNo INT,
+    @ToEmpNo INT
+AS
+BEGIN
+    IF @Action = 'S'
+    BEGIN
+        SELECT Fin_Year, Emp_Name, Emp_No, Branch, Designation,Emp_JoinDt
+        FROM
+        (
+            SELECT 
+                CONVERT(VARCHAR(10), DATENAME(MM, DATEADD(M, 1, Br_LastProcess))) + '-' + CAST(YEAR(Br_LastProcess) AS VARCHAR(4)) AS Fin_Year
+            FROM Hrm_Br_Param
+        ) AS Subquery1
+        CROSS JOIN
+        (
+            SELECT 
+                Emp_Name, Emp_No,Emp_JoinDt, b.Hrm_Desc AS Branch, c.Hrm_Desc AS Designation
+            FROM 
+                Hrm_Emp_Master a
+                LEFT JOIN Hrm_Genmst b ON b.Hrm_Scode = a.Emp_Dept
+                LEFT JOIN Hrm_Genmst c ON c.Hrm_Scode = a.Emp_Desig
+            WHERE 
+                b.Hrm_Mcode = 3 
+                AND c.Hrm_Mcode = 10 
+                AND a.Emp_Status = 1 
+                AND a.Emp_No BETWEEN @FromEmpNo AND @ToEmpNo
+        ) AS Subquery2;
+    END
+
+    IF @Action = 'E'
+    BEGIN
+        SELECT (SELECT ED_Desc FROM Hrm_ED_Master WHERE ED_Code = Cu_Tr_Code) AS 'ED_Desc', Cu_Tr_Amt, Cu_Tr_Code 
+        FROM Hrm_currentLedger 
+        WHERE Cu_Tr_EmpNo BETWEEN @FromEmpNo AND @ToEmpNo 
+        AND Cu_Tr_Code >= 5000
+        AND Cu_Tr_Payable = 'P' 
+        AND Cu_Tr_Amt <> 0;
+    END
+    
+    IF @Action = 'D'
+    BEGIN
+        SELECT (SELECT ED_Desc FROM Hrm_ED_Master WHERE ED_Code = Cu_Tr_Code) AS 'ED_Desc', Cu_Tr_Amt, Cu_Tr_Code 
+        FROM Hrm_currentLedger 
+        WHERE Cu_Tr_EmpNo BETWEEN @FromEmpNo AND @ToEmpNo 
+        AND Cu_Tr_Code <= 4999
+        AND Cu_Tr_Payable = 'P' 
+        AND Cu_Tr_Amt <> 0;
+    END
+    
+    IF @Action = 'N'
+    BEGIN
+        SELECT DISTINCT Emp_No 
+        FROM Hrm_Emp_Master a, Hrm_CurrentLedger b 
+        WHERE a.Emp_No = b.Cu_Tr_EmpNo 
+        AND a.Emp_No BETWEEN @FromEmpNo AND @ToEmpNo;
+    END
+END
     </div>
 </div>
 
