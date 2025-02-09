@@ -1035,4 +1035,48 @@ public List<JsonResult> GetAnnexureListHOOfficer(string sidx, string sort, int p
     }
 }
 -----------------------------------------------------------------------------
+CREATE TABLE ImageUploads (
+    ID INT IDENTITY PRIMARY KEY,
+    DPCode NVARCHAR(50),
+    AccountNumber NVARCHAR(50),
+    FileName NVARCHAR(255),
+    FilePath NVARCHAR(500),
+    UploadDate DATETIME DEFAULT GETDATE()
+);
+
+--------------------------------------------------------------
+
+CREATE TABLE FileUploads (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    FileName NVARCHAR(255),
+    FolderPath NVARCHAR(500),
+    UploadDate DATETIME DEFAULT GETDATE()
+);
+
+alter table FileUploads
+add DPCode NVARCHAR(50) NOT NULL
+
+drop table FileUploads
+
+CREATE TABLE FileUploads (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    DPCode NVARCHAR(50) NOT NULL,
+    AccountNumber NVARCHAR(50) NOT NULL,
+    UploadDate DATETIME DEFAULT GETDATE()
+);
+
+------------------------------------------------------------------
+
+CREATE PROCEDURE SP_InsertFileUpload
+    @FileName NVARCHAR(255),
+    @FolderPath NVARCHAR(500)
+AS
+BEGIN
+    INSERT INTO FileUploads (FileName, FolderPath)
+    VALUES (@FileName, @FolderPath);
+END
+------------------------------------------------------------------
+
+
+select * from FileUploads
 
